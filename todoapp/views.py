@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Task
 
 
@@ -9,9 +9,15 @@ def task_view(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         priority = request.POST.get('priority')
-        obj = Task(name=name, priority=priority)
+        date = request.POST.get('date')
+        obj = Task(name=name, priority=priority, date=date)
         obj.save()
     return render(request, 'task_view.html', {'tasks': display})
 
 
-
+def delete(request, taskid):
+    task = Task.objects.get(id=taskid)
+    if request.method == "POST":
+        task.delete()
+        return redirect('/')
+    return render(request, 'delete.html', {'task': task})
